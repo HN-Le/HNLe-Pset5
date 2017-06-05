@@ -12,12 +12,10 @@ public class Task_groups implements Serializable {
     private ArrayList<Task> group_items;
 
     // Constructor
-    public Task_groups (String title, Task item){
+    public Task_groups (String title){
 
         group_title = title;
 
-        // Add to list
-        group_items.add(item);
     }
 
     // Return title of task group
@@ -25,6 +23,8 @@ public class Task_groups implements Serializable {
 
     // Return list of task items
     public ArrayList<Task> getGroup_items() { return group_items; }
+
+
 
     // Check if everything is done in the list
     public boolean check(){

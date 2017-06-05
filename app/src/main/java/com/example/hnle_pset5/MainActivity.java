@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -15,25 +16,26 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<Task> taskData;
-    private Context context;
-    private TaskAdapter adapter;
-    DBHelper helper;
-    DBManager database;
+    private ArrayList<Task_groups> taskData;
+    private Context context = this;
+    private TaskGroupAdapter adapter;
+    DBManager database = new DBManager(context);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Arraylist to view items later
-        taskData = new ArrayList<>();
+        // Array list to view items later
+        taskData = DBHelper.getsInstance(MainActivity.this).read_group();
 
         // Open database
         database.open();
 
+
         // Set adapter and view list
         setAdapter();
+
 
     }
 
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                         String new_list = String.valueOf(user_input.getText());
 
                         // Create new entry into database
-                        helper.create_group(new_list);
+                        DBHelper.getsInstance(MainActivity.this).create_group(new_list);
 
                         // Restart the main activity to show the added task
                         restartFirstActivity();
@@ -89,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setAdapter(){
-        adapter = new TaskAdapter(this, taskData);
+        adapter = new TaskGroupAdapter(this, taskData);
         ListView listView = (ListView) findViewById(R.id.task_list);
         listView.setAdapter(adapter);
     }

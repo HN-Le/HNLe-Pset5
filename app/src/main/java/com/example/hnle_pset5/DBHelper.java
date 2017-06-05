@@ -5,6 +5,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -40,8 +42,9 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db){
         String CREATE_DB = "CREATE TABLE " + TABLE + "("
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_NAME
-                + " TEXT NOT NULL," + KEY_STATUS + " TEXT NOT NULL)";
+                + " TEXT," + KEY_STATUS + " TEXT " + " ," + KEY_GROUP + " TEXT)";
 
+    Log.d("TAAAG", CREATE_DB);
         db.execSQL(CREATE_DB);
     }
 
@@ -70,14 +73,14 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Task> read(){
-        SQLiteDatabase db = getReadableDatabase();
+        SQLiteDatabase db2 = getReadableDatabase();
 
         // List of custom objects to store data
         ArrayList<Task> tasks = new ArrayList<>();
 
         // Create query to give to the cursor
         String query = "SELECT " + KEY_NAME + ", " + KEY_STATUS + " FROM " + TABLE;
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db2.rawQuery(query, null);
 
         // Set cursor to the beginning of the database
         if (cursor.moveToFirst()) {
@@ -97,10 +100,43 @@ public class DBHelper extends SQLiteOpenHelper {
 
         // Close database and cursor
         cursor.close();
-        db.close();
+        db2.close();
 
 
         return tasks;
+    }
+
+    public ArrayList<Task_groups> read_group(){
+        SQLiteDatabase db = getReadableDatabase();
+
+        // List of custom objects to store data
+        ArrayList<Task_groups> task_group = new ArrayList<>();
+
+        // Create query to give to the cursor
+        String query = "SELECT " + KEY_GROUP + " FROM " + TABLE;
+        Cursor cursor = db.rawQuery(query, null);
+
+        // Set cursor to the beginning of the database
+        if (cursor.moveToFirst()) {
+            do {
+                // add id, done-status and to-do from current row to TodoList
+                String task_group_list = cursor.getString(cursor.getColumnIndex(KEY_GROUP));
+
+                // Create task object with the retrieved data
+                Task_groups tasks_group = new Task_groups(task_group_list);
+                task_group.add(tasks_group);
+            }
+
+            // While there is still a next entry
+            while (cursor.moveToNext());
+        }
+
+        // Close database and cursor
+        cursor.close();
+        db.close();
+
+
+        return task_group;
     }
 
     public void update(Task task){

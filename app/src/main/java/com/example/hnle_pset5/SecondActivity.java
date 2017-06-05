@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class SecondActivity extends AppCompatActivity {
 
     DBHelper helper;
-    Context context;
     ArrayList<Task> taskList;
     String status_task;
     ListView lvitems;
@@ -31,11 +30,6 @@ public class SecondActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
-
-        // Create the database helper
-
-        // ERROR
-        database.open();
 
         lvitems = (ListView) findViewById(R.id.lvitems) ;
 
