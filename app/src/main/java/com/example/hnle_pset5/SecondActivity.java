@@ -21,10 +21,10 @@ public class SecondActivity extends AppCompatActivity {
     DBHelper helper;
     ArrayList<Task> taskList;
     String status_task;
+    String group;
     ListView lvitems;
     ArrayAdapter arrayAdapter;
-    DBManager database;
-
+    private TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,15 +34,15 @@ public class SecondActivity extends AppCompatActivity {
         lvitems = (ListView) findViewById(R.id.lvitems) ;
 
         // Ask for a list of all tasks
-        taskList = helper.read();
+        taskList = DBHelper.getsInstance(SecondActivity.this).read();
 
-        makeListAdapter();
+        setAdapter();
 
         // Loop through task database
         for (Task task: taskList){
 
             // If task is done check the box
-            if (task.getTask_status().equals("DONE")) {
+            if ("DONE".equals(task.getTask_status())) {
                 lvitems.setItemChecked(taskList.indexOf(task), true);
             }
 
@@ -110,20 +110,10 @@ public class SecondActivity extends AppCompatActivity {
     }
 
 
-    // Make adapter to show the list
-    public void makeListAdapter(){
-
-        // list view with checkboxes next to the text
-        arrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, taskList);
-
-        lvitems = (ListView) findViewById(R.id.lvitems);
-
-        assert lvitems != null;
-        lvitems.setAdapter(arrayAdapter);
-
-        lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-
+    public void setAdapter(){
+        adapter = new TaskAdapter(this, taskList );
+        ListView listView = (ListView) findViewById(R.id.lvitems);
+        listView.setAdapter(adapter);
     }
 
     // Onclick Listener for when an item has been clicked in the list
@@ -132,6 +122,8 @@ public class SecondActivity extends AppCompatActivity {
         // Listener to check the boxes (un check/ check)
         @Override
         public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
+
+            group = taskList.get(position).getTask_group();
 
             // check the status of the task
             status_task = taskList.get(position).getTask_status();

@@ -9,9 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -20,11 +23,15 @@ public class MainActivity extends AppCompatActivity {
     private Context context = this;
     private TaskGroupAdapter adapter;
     DBManager database = new DBManager(context);
+    String item;
+    ListView group_items;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        group_items = (ListView) findViewById(R.id.task_list);
 
         // Array list to view items later
         taskData = DBHelper.getsInstance(MainActivity.this).read_group();
@@ -32,9 +39,12 @@ public class MainActivity extends AppCompatActivity {
         // Open database
         database.open();
 
+        group_items.setOnItemClickListener(new Listener());
 
         // Set adapter and view list
         setAdapter();
+
+
 
 
     }
@@ -67,9 +77,6 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
 
-//                        Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
-//                        startActivity(intent);
-
                         // Get user input
                         String new_list = String.valueOf(user_input.getText());
 
@@ -94,6 +101,21 @@ public class MainActivity extends AppCompatActivity {
         adapter = new TaskGroupAdapter(this, taskData);
         ListView listView = (ListView) findViewById(R.id.task_list);
         listView.setAdapter(adapter);
+    }
+
+    // Onclick Listener for when an item has been clicked in the list
+    private class Listener implements AdapterView.OnItemClickListener {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            item = taskData.get(position).getGroup_title();
+
+            Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+            startActivity(intent);
+
+        }
+
     }
 
     // Restart the main activity

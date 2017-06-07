@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="false"
+    android:padding="16dp"
     tools:context= "com.example.hnle_pset5.SecondActivity">
 
     <ListView
         android:id="@+id/lvitems"
-        android:layout_width="362dp"
-        android:layout_height="505dp"
+        android:layout_width="0dp"
+        android:layout_height="463dp"
         android:layout_marginTop="4dp"
         android:choiceMode="multipleChoice"
         app:layout_constraintHorizontal_bias="0.0"

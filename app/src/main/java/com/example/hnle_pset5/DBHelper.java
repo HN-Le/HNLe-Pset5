@@ -44,9 +44,11 @@ public class DBHelper extends SQLiteOpenHelper {
                 + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_NAME
                 + " TEXT," + KEY_STATUS + " TEXT " + " ," + KEY_GROUP + " TEXT)";
 
-    Log.d("TAAAG", CREATE_DB);
         db.execSQL(CREATE_DB);
     }
+
+    
+
 
     // Upgrade database when helper object is made and there is one already
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
@@ -79,7 +81,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Task> tasks = new ArrayList<>();
 
         // Create query to give to the cursor
-        String query = "SELECT " + KEY_NAME + ", " + KEY_STATUS + " FROM " + TABLE;
+        String query = "SELECT " + KEY_NAME + ", " + KEY_STATUS + ", " + KEY_GROUP + " FROM " + TABLE;
         Cursor cursor = db2.rawQuery(query, null);
 
         // Set cursor to the beginning of the database
@@ -88,9 +90,10 @@ public class DBHelper extends SQLiteOpenHelper {
                 // add id, done-status and to-do from current row to TodoList
                 String task_name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
                 String task_status = cursor.getString(cursor.getColumnIndex(KEY_STATUS));
+                String task_group = cursor.getString(cursor.getColumnIndex(KEY_GROUP));
 
                 // Create contact object with the retrieved data
-                Task task = new Task(task_name, task_status);
+                Task task = new Task(task_name, task_status, task_group);
                 tasks.add(task);
             }
 

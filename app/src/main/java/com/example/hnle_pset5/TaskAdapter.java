@@ -2,14 +2,18 @@ package com.example.hnle_pset5;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by Tiny on 2-6-2017.
@@ -20,6 +24,8 @@ public class TaskAdapter extends ArrayAdapter {
     private ArrayList<Task> taskData;
     private Context context;
     private ListActivity listActivity;
+    String group;
+    Task task;
 
     // Constructor
     public TaskAdapter (Context temp_context, ArrayList<Task> data){
@@ -37,17 +43,16 @@ public class TaskAdapter extends ArrayAdapter {
 
         if (view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = inflater.inflate(R.layout.activity_main, parent, false);
+            view = inflater.inflate(R.layout.item_tasks, parent, false);
 
         }
 
-        Task task = taskData.get(pos);
+        task = taskData.get(pos);
+
         String task_item = task.getTask_name();
 
-        TextView listTextView = (TextView) view.findViewById(R.id.listTextView);
+        TextView listTextView = (TextView) view.findViewById(R.id.task_title);
         listTextView.setText(task_item);
-
-        // ONCLICK LISTENER HERE FOR WHEN PRESSED ON TASK
 
         return view;
 
