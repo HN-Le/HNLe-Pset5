@@ -33,19 +33,18 @@ public class MainActivity extends AppCompatActivity {
 
         group_items = (ListView) findViewById(R.id.task_list);
 
-        // Array list to view items later
-        taskData = DBHelper.getsInstance(MainActivity.this).read_group();
+        Log.i("Tag", "MAIN ACTIVITY");
 
         // Open database
         database.open();
+
+        // Array list to view items later
+        taskData = DBHelper.getsInstance(MainActivity.this).read_group();
 
         group_items.setOnItemClickListener(new Listener());
 
         // Set adapter and view list
         setAdapter();
-
-
-
 
     }
 
@@ -111,7 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
             item = taskData.get(position).getGroup_title();
 
+            String group_id = taskData.get(position).getGroup_id();
+
             Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
+            intent.putExtra("group_id", group_id);
             startActivity(intent);
 
         }

@@ -18,12 +18,12 @@ import java.util.ArrayList;
 
 public class SecondActivity extends AppCompatActivity {
 
-    DBHelper helper;
     ArrayList<Task> taskList;
     String status_task;
     String group;
     ListView lvitems;
     ArrayAdapter arrayAdapter;
+    String group_id;
     private TaskAdapter adapter;
 
     @Override
@@ -31,10 +31,13 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_second);
 
+        Bundle extras = getIntent().getExtras();
+        group_id = extras.getString("group_id");
+
         lvitems = (ListView) findViewById(R.id.lvitems) ;
 
         // Ask for a list of all tasks
-        taskList = DBHelper.getsInstance(SecondActivity.this).read();
+        taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
         setAdapter();
 
@@ -96,10 +99,10 @@ public class SecondActivity extends AppCompatActivity {
                         String task = String.valueOf(user_input.getText());
 
                         // Store user input in the database
-                        helper.create(task, "TODO", "1");
+                        DBHelper.getsInstance(SecondActivity.this).create(task, "TODO", group_id);
 
                         // Restart the main activity to show the added task
-                        restartFirstActivity();
+//                        restartFirstActivity();
                     }
                 })
 
@@ -150,7 +153,7 @@ public class SecondActivity extends AppCompatActivity {
             }
 
             // Update the database
-            helper.update(taskList.get(position));
+            DBHelper.getsInstance(SecondActivity.this).update(taskList.get(position));
 
         }
 
@@ -162,9 +165,9 @@ public class SecondActivity extends AppCompatActivity {
         public boolean onItemLongClick (AdapterView<?> parent, View view, int position, long id) {
 
             // Delete from database
-            helper.delete(taskList.get(position));
+            DBHelper.getsInstance(SecondActivity.this).delete(taskList.get(position));
 
-            helper.read();
+            DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
             // Delete object
             taskList.remove(position);
@@ -176,7 +179,7 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
-    // Restart the main activity
+    // Restart
     private void restartFirstActivity()
     {
         Intent i = getBaseContext().getPackageManager()

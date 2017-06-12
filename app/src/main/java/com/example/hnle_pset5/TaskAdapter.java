@@ -15,10 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-/**
- * Created by Tiny on 2-6-2017.
- */
-
 public class TaskAdapter extends ArrayAdapter {
 
     private ArrayList<Task> taskData;
