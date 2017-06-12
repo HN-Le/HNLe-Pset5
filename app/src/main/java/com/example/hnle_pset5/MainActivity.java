@@ -33,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
 
         group_items = (ListView) findViewById(R.id.task_list);
 
-        Log.i("Tag", "MAIN ACTIVITY");
-
         // Open database
         database.open();
 

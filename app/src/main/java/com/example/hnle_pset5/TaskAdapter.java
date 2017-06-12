@@ -31,6 +31,12 @@ public class TaskAdapter extends ArrayAdapter {
         this.context = temp_context;
     }
 
+    @Override
+    public int getCount() {
+        return taskData.size();
+    }
+
+
     // Get view and return
     @Override
     public View getView(int pos, View  convertView, ViewGroup parent){
@@ -54,3 +60,4 @@ public class TaskAdapter extends ArrayAdapter {
 
     }
 }
+

@@ -28,7 +28,6 @@ public class SecondActivity extends AppCompatActivity {
     String group_id;
     Context context = this;
     DBManager database = new DBManager(context);
-    TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,21 +37,18 @@ public class SecondActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         group_id = extras.getString("group_id");
 
+
         lvitems = (ListView) findViewById(R.id.lvitems);
 
         database.open();
 
+        setAdapter();
+
         // Ask for a list of all tasks
         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
-        Log.i("tasks oncreate", taskList.toString());
-
-        setAdapter();
 
         // Loop through task database
         for (Task task: taskList){
-
-            //retrieve group_id
-
 
             // If task is done check the box
             if ("DONE".equals(task.getTask_status())) {
@@ -66,11 +62,13 @@ public class SecondActivity extends AppCompatActivity {
 
         }
 
+
         // Listener for the short taps to change the status
         lvitems.setOnItemClickListener(new Listener());
 
         // Listener for the long taps on the task itself to delete
         lvitems.setOnItemLongClickListener(new LongListener());
+
 
     }
 
@@ -79,6 +77,7 @@ public class SecondActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+
     }
 
     // When + sign is pressed
@@ -104,26 +103,17 @@ public class SecondActivity extends AppCompatActivity {
 
                         // Get user input
                         String task = String.valueOf(user_input.getText());
-                        Log.i("input", task);
 
                         // Store user input in the database
                         DBHelper.getsInstance(SecondActivity.this).create(task, "TODO", group_id);
 
                         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
-                        Log.i("tasks ADD ", taskList.toString());
-
-                        ArrayList <String> groups = new ArrayList<>();
-
                         for(Task taskie : taskList){
-                            groups.add(taskie.getTask_name());
-                            Log.i("groups", groups.toString());
+                            groupList.add(taskie.getTask_name());
                         }
 
-                        groupList = groups;
-
                         setAdapter();
-
 
                     }
                 })
@@ -142,7 +132,7 @@ public class SecondActivity extends AppCompatActivity {
         // list view with checkboxes next to the text
 
         arrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, groupList); // VERANDER
+                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, groupList);
 
         lvitems = (ListView) findViewById(R.id.lvitems);
 
@@ -150,6 +140,7 @@ public class SecondActivity extends AppCompatActivity {
         lvitems.setAdapter(arrayAdapter);
 
         lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+
     }
 
     // Onclick Listener for when an item has been clicked in the list

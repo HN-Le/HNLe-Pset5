@@ -103,10 +103,10 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<Task> tasks = new ArrayList<>();
 
         // Create query to give to the cursor
-        String query = "SELECT " + KEY_NAME + " AND " + KEY_STATUS + " FROM " + TABLE + " WHERE " + KEY_GROUP_ID + " = "  + group;
+        String query = "SELECT * FROM " + TABLE+ " WHERE " + KEY_GROUP_ID + " = ?";
         Log.i("Helper", query);
 
-        Cursor cursor = db.rawQuery(query, null);
+        Cursor cursor = db.rawQuery(query, new String[]{group});
         Log.i("Helper", "TEST2");
         // Set cursor to the beginning of the database
         if (cursor.moveToFirst()) {
