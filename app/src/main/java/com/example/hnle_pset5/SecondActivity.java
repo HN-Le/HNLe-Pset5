@@ -41,6 +41,9 @@ public class SecondActivity extends AppCompatActivity {
         // Loop through task database
         for (Task task: taskList){
 
+            //retrieve group_id
+
+
             // If task is done check the box
             if ("DONE".equals(task.getTask_status())) {
                 lvitems.setItemChecked(taskList.indexOf(task), true);
@@ -93,7 +96,7 @@ public class SecondActivity extends AppCompatActivity {
                         String task = String.valueOf(user_input.getText());
 
                         // Store user input in the database
-                        helper.create(task, "TODO");
+                        helper.create(task, "TODO", "1");
 
                         // Restart the main activity to show the added task
                         restartFirstActivity();
