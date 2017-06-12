@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +20,15 @@ import java.util.ArrayList;
 public class SecondActivity extends AppCompatActivity {
 
     ArrayList<Task> taskList;
+    ArrayList<String> groupList = new ArrayList<>();
     String status_task;
     String group;
     ListView lvitems;
     ArrayAdapter arrayAdapter;
     String group_id;
-    private TaskAdapter adapter;
+    Context context = this;
+    DBManager database = new DBManager(context);
+    TaskAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +38,13 @@ public class SecondActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         group_id = extras.getString("group_id");
 
-        lvitems = (ListView) findViewById(R.id.lvitems) ;
+        lvitems = (ListView) findViewById(R.id.lvitems);
+
+        database.open();
 
         // Ask for a list of all tasks
         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
+        Log.i("tasks oncreate", taskList.toString());
 
         setAdapter();
 
@@ -97,12 +104,27 @@ public class SecondActivity extends AppCompatActivity {
 
                         // Get user input
                         String task = String.valueOf(user_input.getText());
+                        Log.i("input", task);
 
                         // Store user input in the database
                         DBHelper.getsInstance(SecondActivity.this).create(task, "TODO", group_id);
 
-                        // Restart the main activity to show the added task
-//                        restartFirstActivity();
+                        taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
+
+                        Log.i("tasks ADD ", taskList.toString());
+
+                        ArrayList <String> groups = new ArrayList<>();
+
+                        for(Task taskie : taskList){
+                            groups.add(taskie.getTask_name());
+                            Log.i("groups", groups.toString());
+                        }
+
+                        groupList = groups;
+
+                        setAdapter();
+
+
                     }
                 })
 
@@ -117,9 +139,17 @@ public class SecondActivity extends AppCompatActivity {
 
 
     public void setAdapter(){
-        adapter = new TaskAdapter(this, taskList );
-        ListView listView = (ListView) findViewById(R.id.lvitems);
-        listView.setAdapter(adapter);
+        // list view with checkboxes next to the text
+
+        arrayAdapter = new ArrayAdapter<>
+                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, groupList); // VERANDER
+
+        lvitems = (ListView) findViewById(R.id.lvitems);
+
+        assert lvitems != null;
+        lvitems.setAdapter(arrayAdapter);
+
+        lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
     }
 
     // Onclick Listener for when an item has been clicked in the list
@@ -179,14 +209,5 @@ public class SecondActivity extends AppCompatActivity {
         }
     }
 
-    // Restart
-    private void restartFirstActivity()
-    {
-        Intent i = getBaseContext().getPackageManager()
-                .getLaunchIntentForPackage(getBaseContext().getPackageName() );
-
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
-        startActivity(i);
-    }
 }
 

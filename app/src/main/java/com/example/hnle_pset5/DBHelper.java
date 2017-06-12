@@ -46,7 +46,6 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db){
 
-        Log.i("Tag", "ONCREATE");
 
         // Table for tasks
         String CREATE_DB = "CREATE TABLE " + TABLE +
@@ -58,8 +57,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
         db.execSQL(CREATE_DB);
         db.execSQL(CREATE_DB2);
-
-        Log.i("Tag", CREATE_DB);
 
     }
 
@@ -78,6 +75,11 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(KEY_STATUS, task_status);
         values.put(KEY_GROUP_ID, task_group_id);
         db.insert(TABLE, null, values);
+
+        Log.i("Helper", KEY_NAME);
+        Log.i("Helper", KEY_STATUS);
+        Log.i("Helper", KEY_GROUP_ID);
+
         db.close();
     }
 
@@ -95,17 +97,22 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Task> read(String group){
 
         SQLiteDatabase db = getReadableDatabase();
-
+        Log.i("Helper", "TEST");
+        Log.i("Helper", group);
         // List of custom objects to store data
         ArrayList<Task> tasks = new ArrayList<>();
 
         // Create query to give to the cursor
-        String query = "SELECT " + KEY_NAME + ", " + KEY_STATUS + " FROM " + TABLE + " WHERE " + KEY_GROUP_ID + " = "  + group;
+        String query = "SELECT " + KEY_NAME + " AND " + KEY_STATUS + " FROM " + TABLE + " WHERE " + KEY_GROUP_ID + " = "  + group;
+        Log.i("Helper", query);
 
         Cursor cursor = db.rawQuery(query, null);
-
+        Log.i("Helper", "TEST2");
         // Set cursor to the beginning of the database
         if (cursor.moveToFirst()) {
+
+            Log.i("Helper", "IF");
+
             do {
                 // add id, done-status and to-do from current row to TodoList
                 String task_name = cursor.getString(cursor.getColumnIndex(KEY_NAME));
@@ -115,15 +122,21 @@ public class DBHelper extends SQLiteOpenHelper {
                 // Create contact object with the retrieved data
                 Task task = new Task(task_name, task_status, group_id);
                 tasks.add(task);
+                Log.i("Helper", task_name);
+                Log.i("Helper", task_status);
+                Log.i("Helper", group_id);
+                Log.i("Helper", "TEST");
             }
 
             // While there is still a next entry
             while (cursor.moveToNext());
         }
 
+        Log.i("Helper", "TEST3");
         cursor.close();
         db.close();
 
+        Log.i("Helper", "TEST4");
         return tasks;
     }
 
