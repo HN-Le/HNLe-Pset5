@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,6 +24,10 @@ public class TaskAdapter extends ArrayAdapter {
     private ListActivity listActivity;
     String group;
     Task task;
+    String task_status;
+    String task_item;
+
+
 
     // Constructor
     public TaskAdapter (Context temp_context, ArrayList<Task> data){
@@ -42,6 +48,7 @@ public class TaskAdapter extends ArrayAdapter {
     public View getView(int pos, View  convertView, ViewGroup parent){
 
         View view = convertView;
+        Log.d("TASK view item", "WERKT");
 
         if (view == null){
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -50,14 +57,42 @@ public class TaskAdapter extends ArrayAdapter {
         }
 
         task = taskData.get(pos);
+        task_item = task.getTask_name();
+        task_status = task.getTask_status();
 
-        String task_item = task.getTask_name();
+        TextView listTextView = (CheckBox) view.findViewById(R.id.checkBox);
+        Log.d("TASK view status", task_status);
+        Log.d("TASK view item", task_item);
 
-        TextView listTextView = (TextView) view.findViewById(R.id.task_title);
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+
+        checkBox.setOnCheckedChangeListener(new Listener());
+
         listTextView.setText(task_item);
 
         return view;
 
     }
+
+    public class Listener implements CompoundButton.OnCheckedChangeListener{
+
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+            if (task_status.equals("TODO")){
+                checkBox.setChecked(checkBox.isChecked());
+                Log.d("TASK TODO", task_status);
+            }
+
+            else {
+                checkBox.setChecked(!checkBox.isChecked());
+                Log.d("TASK NOP", task_status);
+            }
+
+        }
+    }
+
 }
 

@@ -23,6 +23,7 @@ public class SecondActivity extends AppCompatActivity {
     String status_task;
     ListView lvitems;
     ArrayAdapter arrayAdapter;
+    private TaskAdapter adapter;
     String group_id;
     Context context = this;
     DBManager database = new DBManager(context);
@@ -42,24 +43,25 @@ public class SecondActivity extends AppCompatActivity {
         // Ask for a list of all tasks
         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
-        Log.d("CHECKER", taskList.toString());
+        Log.d("CHECKER TASKLIST", taskList.toString());
+
 
         // Loop through task database
-        for (Task task: taskList){
-
-            // If task is done check the box
-            if ("DONE".equals(task.getTask_status())) {
-
-                lvitems.setItemChecked(taskList.indexOf(task), true);
-            }
-
-            // If not, leave it unchecked
-            else {
-                lvitems.setItemChecked(taskList.indexOf(task), false);
-            }
-
-            Log.d("CHECKER", task.getTask_status());
-        }
+//        for (Task task: taskList){
+//
+//            // If task is done check the box
+//            if ("DONE".equals(task.getTask_status())) {
+//
+//                lvitems.setItemChecked(taskList.indexOf(task), true);
+//            }
+//
+//            // If not, leave it unchecked
+//            else {
+//                lvitems.setItemChecked(taskList.indexOf(task), false);
+//            }
+//
+//            Log.d("CHECKER", task.getTask_status());
+//        }
 
         setAdapter();
 
@@ -132,15 +134,19 @@ public class SecondActivity extends AppCompatActivity {
     public void setAdapter(){
         // list view with checkboxes next to the text
 
-        arrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, taskList);
+//        arrayAdapter = new ArrayAdapter<>
+//                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, taskList);
+//
+//        lvitems = (ListView) findViewById(R.id.lvitems);
+//
+//        assert lvitems != null;
+//        lvitems.setAdapter(arrayAdapter);
+//
+//        lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
-        lvitems = (ListView) findViewById(R.id.lvitems);
-
-        assert lvitems != null;
-        lvitems.setAdapter(arrayAdapter);
-
-        lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        adapter = new TaskAdapter(this, taskList);
+        ListView listView = (ListView) findViewById(R.id.lvitems);
+        listView.setAdapter(adapter);
 
     }
 
@@ -157,29 +163,32 @@ public class SecondActivity extends AppCompatActivity {
             // If box is checked
             if (lvitems.isItemChecked(position)){
                 // UN check the box
-                lvitems.setItemChecked(position, true);
+                lvitems.setItemChecked(position, false);
 
                 // Change the status in object to "TO DO"
                 taskList.get(position).setTask_status("TODO");
 
-
+                Log.d("CHECKER POSITION", taskList.get(position).toString());
                 Log.d("CHECKER CHECKED", status_task);
             }
 
             // If box is unchecked
             else{
                 // check the box
-                lvitems.setItemChecked(position, false);
+                lvitems.setItemChecked(position, true);
 
                 // Change the status in object to DONE
                 taskList.get(position).setTask_status("DONE");
 
+                Log.d("CHECKER POSITION", taskList.get(position).toString());
                 Log.d("CHECKER UNCHECKED", status_task);
 
             }
 
             // Update the database
             DBHelper.getsInstance(SecondActivity.this).update(taskList.get(position));
+
+            setAdapter();
 
         }
 
