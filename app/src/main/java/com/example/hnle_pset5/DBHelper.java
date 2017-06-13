@@ -65,26 +65,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void create(String task_name, String task_status, String task_group_id) {
-        Log.i("Tag", "CREATE");
+    public void create(String task_name, String task_group_id) {
 
         SQLiteDatabase db = getWritableDatabase();
         onUpgrade(db, 1, 1);
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, task_name);
-        values.put(KEY_STATUS, task_status);
+        values.put(KEY_STATUS, "TODO");
         values.put(KEY_GROUP_ID, task_group_id);
         db.insert(TABLE, null, values);
-
-        Log.i("Helper", KEY_NAME);
-        Log.i("Helper", KEY_STATUS);
-        Log.i("Helper", KEY_GROUP_ID);
 
         db.close();
     }
 
     public void create_group(String task_group) {
-        Log.i("Tag", "CREATE_GROUP");
 
         SQLiteDatabase db = getWritableDatabase();
         onUpgrade(db, 1, 1);
@@ -97,21 +91,15 @@ public class DBHelper extends SQLiteOpenHelper {
     public ArrayList<Task> read(String group){
 
         SQLiteDatabase db = getReadableDatabase();
-        Log.i("Helper", "TEST");
-        Log.i("Helper", group);
         // List of custom objects to store data
         ArrayList<Task> tasks = new ArrayList<>();
 
         // Create query to give to the cursor
         String query = "SELECT * FROM " + TABLE+ " WHERE " + KEY_GROUP_ID + " = ?";
-        Log.i("Helper", query);
 
         Cursor cursor = db.rawQuery(query, new String[]{group});
-        Log.i("Helper", "TEST2");
         // Set cursor to the beginning of the database
         if (cursor.moveToFirst()) {
-
-            Log.i("Helper", "IF");
 
             do {
                 // add id, done-status and to-do from current row to TodoList
@@ -122,27 +110,19 @@ public class DBHelper extends SQLiteOpenHelper {
                 // Create contact object with the retrieved data
                 Task task = new Task(task_name, task_status, group_id);
                 tasks.add(task);
-                Log.i("Helper", task_name);
-                Log.i("Helper", task_status);
-                Log.i("Helper", group_id);
-                Log.i("Helper", "TEST");
             }
 
             // While there is still a next entry
             while (cursor.moveToNext());
         }
 
-        Log.i("Helper", "TEST3");
         cursor.close();
         db.close();
 
-        Log.i("Helper", "TEST4");
         return tasks;
     }
 
     public ArrayList<Task_groups> read_group() {
-
-        Log.i("Tag", "READ_GROUP");
 
         SQLiteDatabase db = getReadableDatabase();
 
@@ -186,18 +166,17 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-
     public void delete(Task task){
         SQLiteDatabase db = getWritableDatabase();
         db.delete(TABLE, KEY_NAME + " = ? ", new String[] {task.getTask_name()});
         db.close();
     }
 
-
-
-
-
-
+    public void delete_group(Task_groups task){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_GROUP, GROUP + " = ? ", new String[] {task.getGroup_title()});
+        db.close();
+    }
 
 }
 

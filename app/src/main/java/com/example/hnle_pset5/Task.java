@@ -1,5 +1,8 @@
 package com.example.hnle_pset5;
 
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
 import java.io.Serializable;
 
 public class Task implements Serializable {
@@ -28,8 +31,5 @@ public class Task implements Serializable {
 
     // Set Task status
     public void setTask_status (String newStatus) {task_status = newStatus;}
-
-
-
 
 }

@@ -20,9 +20,7 @@ import java.util.ArrayList;
 public class SecondActivity extends AppCompatActivity {
 
     ArrayList<Task> taskList;
-    ArrayList<String> groupList = new ArrayList<>();
     String status_task;
-    String group;
     ListView lvitems;
     ArrayAdapter arrayAdapter;
     String group_id;
@@ -37,21 +35,21 @@ public class SecondActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         group_id = extras.getString("group_id");
 
-
         lvitems = (ListView) findViewById(R.id.lvitems);
 
         database.open();
 
-        setAdapter();
-
         // Ask for a list of all tasks
         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
+
+        Log.d("CHECKER", taskList.toString());
 
         // Loop through task database
         for (Task task: taskList){
 
             // If task is done check the box
             if ("DONE".equals(task.getTask_status())) {
+
                 lvitems.setItemChecked(taskList.indexOf(task), true);
             }
 
@@ -60,16 +58,16 @@ public class SecondActivity extends AppCompatActivity {
                 lvitems.setItemChecked(taskList.indexOf(task), false);
             }
 
+            Log.d("CHECKER", task.getTask_status());
         }
 
+        setAdapter();
 
         // Listener for the short taps to change the status
         lvitems.setOnItemClickListener(new Listener());
 
         // Listener for the long taps on the task itself to delete
         lvitems.setOnItemLongClickListener(new LongListener());
-
-
     }
 
     // Renders the menu in the main activity
@@ -80,13 +78,19 @@ public class SecondActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setAdapter();
+    }
+
+
     // When + sign is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
         // Make an edit text for in the dialog
         final EditText user_input = new EditText(this);
-
 
         // Build dialog screen
         AlertDialog dialog = new AlertDialog.Builder(this)
@@ -105,15 +109,13 @@ public class SecondActivity extends AppCompatActivity {
                         String task = String.valueOf(user_input.getText());
 
                         // Store user input in the database
-                        DBHelper.getsInstance(SecondActivity.this).create(task, "TODO", group_id);
+                        DBHelper.getsInstance(SecondActivity.this).create(task, group_id);
 
                         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
-                        for(Task taskie : taskList){
-                            groupList.add(taskie.getTask_name());
-                        }
-
                         setAdapter();
+
+
 
                     }
                 })
@@ -127,12 +129,11 @@ public class SecondActivity extends AppCompatActivity {
 
     }
 
-
     public void setAdapter(){
         // list view with checkboxes next to the text
 
         arrayAdapter = new ArrayAdapter<>
-                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, groupList);
+                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, taskList);
 
         lvitems = (ListView) findViewById(R.id.lvitems);
 
@@ -150,27 +151,31 @@ public class SecondActivity extends AppCompatActivity {
         @Override
         public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
 
-            group = taskList.get(position).getTask_group();
-
             // check the status of the task
             status_task = taskList.get(position).getTask_status();
 
-            // If box is unchecked
-            if (status_task.equals("TODO")){
-                // Check the box
+            // If box is checked
+            if (lvitems.isItemChecked(position)){
+                // UN check the box
                 lvitems.setItemChecked(position, true);
+
+                // Change the status in object to "TO DO"
+                taskList.get(position).setTask_status("TODO");
+
+
+                Log.d("CHECKER CHECKED", status_task);
+            }
+
+            // If box is unchecked
+            else{
+                // check the box
+                lvitems.setItemChecked(position, false);
 
                 // Change the status in object to DONE
                 taskList.get(position).setTask_status("DONE");
-            }
 
-            // If box is checked
-            else{
-                // Un check the box
-                lvitems.setItemChecked(position, false);
+                Log.d("CHECKER UNCHECKED", status_task);
 
-                // Change the status in object to TO DO
-                taskList.get(position).setTask_status("TODO");
             }
 
             // Update the database

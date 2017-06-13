@@ -5,7 +5,8 @@
 
     <TextView
         android:id="@+id/task_title"
-        android:layout_width="149dp"
-        android:layout_height="wrap_content"
-        />
+        android:layout_width="194dp"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>

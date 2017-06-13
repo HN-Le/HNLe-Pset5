@@ -3,6 +3,7 @@ package com.example.hnle_pset5;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     DBManager database = new DBManager(context);
     String item;
     ListView group_items;
+    String group_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +42,11 @@ public class MainActivity extends AppCompatActivity {
         // Array list to view items later
         taskData = DBHelper.getsInstance(MainActivity.this).read_group();
 
-        group_items.setOnItemClickListener(new Listener());
-
         // Set adapter and view list
         setAdapter();
+
+        group_items.setOnItemClickListener(new Listener());
+        group_items.setOnItemLongClickListener(new MainActivity.LongListener());
 
     }
 
@@ -108,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
             item = taskData.get(position).getGroup_title();
 
-            String group_id = taskData.get(position).getGroup_id();
+            group_id = taskData.get(position).getGroup_id();
 
             Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
             intent.putExtra("group_id", group_id);
@@ -116,6 +120,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+    }
+
+    // Long Onclick listener for when an task is long pressed
+    private class LongListener implements AdapterView.OnItemLongClickListener{
+
+        public boolean onItemLongClick (AdapterView<?> parent, View view, int position, long id) {
+
+            // Delete from database
+            DBHelper.getsInstance(MainActivity.this).delete_group(taskData.get(position));
+
+            // Delete object
+            taskData.remove(position);
+
+            restartFirstActivity();
+
+            return true;
+        }
     }
 
     // Restart the main activity
@@ -127,4 +148,5 @@ public class MainActivity extends AppCompatActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK );
         startActivity(i);
     }
+
 }
