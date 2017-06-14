@@ -60,7 +60,6 @@ public class SecondActivity extends AppCompatActivity {
 
     }
 
-
     // When + sign is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -91,8 +90,6 @@ public class SecondActivity extends AppCompatActivity {
 
                         setAdapter();
 
-
-
                     }
                 })
 
@@ -108,8 +105,10 @@ public class SecondActivity extends AppCompatActivity {
     public void setAdapter(){
 
         adapter = new TaskAdapter(this, taskList);
+        // Make listener for taps in the list
         adapter.setOnItemCheckedListener(new TaskAdapter.OnItemCheckedListener() {
             @Override
+            // If checked, change status and update database
             public void checkItem(Task task, int position, boolean isChecked) {
                 task.setTask_status(isChecked ? "DONE" : "TODO");
                 DBHelper.getsInstance(SecondActivity.this).update(task);
@@ -129,9 +128,10 @@ public class SecondActivity extends AppCompatActivity {
             // Delete from database
             DBHelper.getsInstance(SecondActivity.this).delete(taskList.get(position));
 
+            // Read database
             DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
-            // Delete object
+            // Delete
             taskList.remove(position);
 
             // notify adapter that list view was changed

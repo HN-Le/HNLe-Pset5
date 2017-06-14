@@ -14,7 +14,6 @@ import java.util.ArrayList;
 public class TaskAdapter extends ArrayAdapter {
 
     private ArrayList<Task> taskData;
-    private Task task;
     private OnItemCheckedListener listener;
 
     // Constructor
@@ -35,7 +34,7 @@ public class TaskAdapter extends ArrayAdapter {
 
         }
 
-        task = taskData.get(pos);
+        final Task task = taskData.get(pos);
         String task_item = task.getTask_name();
         String task_status = task.getTask_status();
 

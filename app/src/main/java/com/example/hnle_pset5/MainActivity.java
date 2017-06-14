@@ -3,7 +3,6 @@ package com.example.hnle_pset5;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,23 +10,19 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import java.util.ArrayList;
-import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity {
 
     private ArrayList<Task_groups> taskData;
     private Context context = this;
     private TaskGroupAdapter adapter;
-    DBManager database = new DBManager(context);
-    String item;
-    ListView group_items;
-    String group_id;
+    public DBManager database = new DBManager(context);
+    public ListView group_items;
+    public String group_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         // Set adapter and view list
         setAdapter();
 
+        // Set listeners for taps and long taps
         group_items.setOnItemClickListener(new Listener());
         group_items.setOnItemLongClickListener(new MainActivity.LongListener());
 
@@ -110,10 +106,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-            item = taskData.get(position).getGroup_title();
-
             group_id = taskData.get(position).getGroup_id();
 
+            // Pass group id and go to next screen
             Intent intent = new Intent(getApplicationContext(), SecondActivity.class);
             intent.putExtra("group_id", group_id);
             startActivity(intent);
@@ -127,13 +122,13 @@ public class MainActivity extends AppCompatActivity {
 
         public boolean onItemLongClick (AdapterView<?> parent, View view, int position, long id) {
 
-            Log.d("LISTENER", "TEST");
             // Delete from database
             DBHelper.getsInstance(MainActivity.this).delete_group(taskData.get(position));
 
             // Delete object
             taskData.remove(position);
 
+            // Restart activity
             restartFirstActivity();
 
             return true;
