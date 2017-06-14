@@ -38,18 +38,15 @@ public class TaskAdapter extends ArrayAdapter {
         String task_item = task.getTask_name();
         String task_status = task.getTask_status();
 
-        //Vind de checkbox
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
 
-        checkBox.setOnCheckedChangeListener(null);
-
-        // zet vinkje aan op basis van task status
+        // Change checkbox based on status
         checkBox.setChecked("DONE".equals(task_status));
 
-        // zet de tekst
+        // set text
         checkBox.setText(task_item);
 
-        // luister op check events
+        // Listen for check events
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -58,7 +55,6 @@ public class TaskAdapter extends ArrayAdapter {
                 }
             }
         });
-
 
         return view;
     }
