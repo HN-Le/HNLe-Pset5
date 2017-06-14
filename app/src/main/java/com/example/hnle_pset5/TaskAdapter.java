@@ -14,10 +14,8 @@ import java.util.ArrayList;
 public class TaskAdapter extends ArrayAdapter {
 
     private ArrayList<Task> taskData;
-    Task task;
-    String task_status;
-    String task_item;
-    OnItemCheckedListener listener;
+    private Task task;
+    private OnItemCheckedListener listener;
 
     // Constructor
     public TaskAdapter (Context context, ArrayList<Task> data){
@@ -38,8 +36,8 @@ public class TaskAdapter extends ArrayAdapter {
         }
 
         task = taskData.get(pos);
-        task_item = task.getTask_name();
-        task_status = task.getTask_status();
+        String task_item = task.getTask_name();
+        String task_status = task.getTask_status();
 
         //Vind de checkbox
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);

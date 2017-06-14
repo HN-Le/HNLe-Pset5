@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -19,9 +18,7 @@ import java.util.ArrayList;
 public class SecondActivity extends AppCompatActivity {
 
     ArrayList<Task> taskList;
-    String status_task;
     ListView lvitems;
-    ArrayAdapter arrayAdapter;
     private TaskAdapter adapter;
     String group_id;
     Context context = this;
@@ -44,6 +41,10 @@ public class SecondActivity extends AppCompatActivity {
 
         Log.d("CHECKER TASKLIST", taskList.toString());
 
+        for (Task task: taskList){
+            Log.d("STATUS", task.getTask_status());
+        }
+
         setAdapter();
 
         // Listener for the long taps on the task itself to delete
@@ -58,6 +59,7 @@ public class SecondActivity extends AppCompatActivity {
         return true;
 
     }
+
 
     // When + sign is pressed
     @Override
@@ -88,6 +90,8 @@ public class SecondActivity extends AppCompatActivity {
                         taskList = DBHelper.getsInstance(SecondActivity.this).read(group_id);
 
                         setAdapter();
+
+
 
                     }
                 })
