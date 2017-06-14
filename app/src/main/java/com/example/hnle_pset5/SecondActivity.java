@@ -2,8 +2,6 @@ package com.example.hnle_pset5;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 
 public class SecondActivity extends AppCompatActivity {
@@ -45,31 +44,11 @@ public class SecondActivity extends AppCompatActivity {
 
         Log.d("CHECKER TASKLIST", taskList.toString());
 
-
-        // Loop through task database
-//        for (Task task: taskList){
-//
-//            // If task is done check the box
-//            if ("DONE".equals(task.getTask_status())) {
-//
-//                lvitems.setItemChecked(taskList.indexOf(task), true);
-//            }
-//
-//            // If not, leave it unchecked
-//            else {
-//                lvitems.setItemChecked(taskList.indexOf(task), false);
-//            }
-//
-//            Log.d("CHECKER", task.getTask_status());
-//        }
-
         setAdapter();
-
-        // Listener for the short taps to change the status
-        lvitems.setOnItemClickListener(new Listener());
 
         // Listener for the long taps on the task itself to delete
         lvitems.setOnItemLongClickListener(new LongListener());
+
     }
 
     // Renders the menu in the main activity
@@ -79,13 +58,6 @@ public class SecondActivity extends AppCompatActivity {
         return true;
 
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        setAdapter();
-    }
-
 
     // When + sign is pressed
     @Override
@@ -117,8 +89,6 @@ public class SecondActivity extends AppCompatActivity {
 
                         setAdapter();
 
-
-
                     }
                 })
 
@@ -132,65 +102,18 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void setAdapter(){
-        // list view with checkboxes next to the text
-
-//        arrayAdapter = new ArrayAdapter<>
-//                (this, android.R.layout.simple_list_item_multiple_choice, android.R.id.text1, taskList);
-//
-//        lvitems = (ListView) findViewById(R.id.lvitems);
-//
-//        assert lvitems != null;
-//        lvitems.setAdapter(arrayAdapter);
-//
-//        lvitems.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
         adapter = new TaskAdapter(this, taskList);
+        adapter.setOnItemCheckedListener(new TaskAdapter.OnItemCheckedListener() {
+            @Override
+            public void checkItem(Task task, int position, boolean isChecked) {
+                task.setTask_status(isChecked ? "DONE" : "TODO");
+                DBHelper.getsInstance(SecondActivity.this).update(task);
+            }
+        });
+
         ListView listView = (ListView) findViewById(R.id.lvitems);
         listView.setAdapter(adapter);
-
-    }
-
-    // Onclick Listener for when an item has been clicked in the list
-    private class Listener implements AdapterView.OnItemClickListener{
-
-        // Listener to check the boxes (un check/ check)
-        @Override
-        public void onItemClick (AdapterView<?> parent, View view, int position, long id) {
-
-            // check the status of the task
-            status_task = taskList.get(position).getTask_status();
-
-            // If box is checked
-            if (lvitems.isItemChecked(position)){
-                // UN check the box
-                lvitems.setItemChecked(position, false);
-
-                // Change the status in object to "TO DO"
-                taskList.get(position).setTask_status("TODO");
-
-                Log.d("CHECKER POSITION", taskList.get(position).toString());
-                Log.d("CHECKER CHECKED", status_task);
-            }
-
-            // If box is unchecked
-            else{
-                // check the box
-                lvitems.setItemChecked(position, true);
-
-                // Change the status in object to DONE
-                taskList.get(position).setTask_status("DONE");
-
-                Log.d("CHECKER POSITION", taskList.get(position).toString());
-                Log.d("CHECKER UNCHECKED", status_task);
-
-            }
-
-            // Update the database
-            DBHelper.getsInstance(SecondActivity.this).update(taskList.get(position));
-
-            setAdapter();
-
-        }
 
     }
 
@@ -208,11 +131,10 @@ public class SecondActivity extends AppCompatActivity {
             taskList.remove(position);
 
             // notify adapter that list view was changed
-            arrayAdapter.notifyDataSetChanged();
+            adapter.notifyDataSetChanged();
 
             return true;
         }
     }
 
 }
-

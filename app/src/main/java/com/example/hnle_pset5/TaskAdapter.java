@@ -1,57 +1,38 @@
 package com.example.hnle_pset5;
 
-import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class TaskAdapter extends ArrayAdapter {
 
     private ArrayList<Task> taskData;
-    private Context context;
-    private ListActivity listActivity;
-    String group;
     Task task;
     String task_status;
     String task_item;
-
-
+    OnItemCheckedListener listener;
 
     // Constructor
-    public TaskAdapter (Context temp_context, ArrayList<Task> data){
-        super(temp_context, 0, data);
+    public TaskAdapter (Context context, ArrayList<Task> data){
+        super(context, 0, data);
         this.taskData = data;
-        this.listActivity = (ListActivity) context;
-        this.context = temp_context;
     }
-
-    @Override
-    public int getCount() {
-        return taskData.size();
-    }
-
 
     // Get view and return
     @Override
-    public View getView(int pos, View  convertView, ViewGroup parent){
+    public View getView(final int pos, View  convertView, ViewGroup parent){
 
         View view = convertView;
-        Log.d("TASK view item", "WERKT");
 
         if (view == null){
-            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater inflater = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.item_tasks, parent, false);
 
         }
@@ -60,39 +41,37 @@ public class TaskAdapter extends ArrayAdapter {
         task_item = task.getTask_name();
         task_status = task.getTask_status();
 
-        TextView listTextView = (CheckBox) view.findViewById(R.id.checkBox);
-        Log.d("TASK view status", task_status);
-        Log.d("TASK view item", task_item);
-
+        //Vind de checkbox
         CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
 
-        checkBox.setOnCheckedChangeListener(new Listener());
+        checkBox.setOnCheckedChangeListener(null);
 
-        listTextView.setText(task_item);
+        // zet vinkje aan op basis van task status
+        checkBox.setChecked("DONE".equals(task_status));
 
-        return view;
+        // zet de tekst
+        checkBox.setText(task_item);
 
-    }
-
-    public class Listener implements CompoundButton.OnCheckedChangeListener{
-
-
+        // luister op check events
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
-                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-            if (task_status.equals("TODO")){
-                checkBox.setChecked(checkBox.isChecked());
-                Log.d("TASK TODO", task_status);
+                if (listener != null) {
+                    listener.checkItem(task, pos, isChecked);
+                }
             }
+        });
 
-            else {
-                checkBox.setChecked(!checkBox.isChecked());
-                Log.d("TASK NOP", task_status);
-            }
 
-        }
+        return view;
+    }
+
+    public void setOnItemCheckedListener(OnItemCheckedListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnItemCheckedListener {
+        void checkItem(Task task, int position, boolean isChecked);
     }
 
 }
-

@@ -127,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         public boolean onItemLongClick (AdapterView<?> parent, View view, int position, long id) {
 
+            Log.d("LISTENER", "TEST");
             // Delete from database
             DBHelper.getsInstance(MainActivity.this).delete_group(taskData.get(position));
 
